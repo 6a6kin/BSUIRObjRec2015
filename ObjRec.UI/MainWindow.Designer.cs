@@ -35,6 +35,7 @@
             this.OtsuFilter = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusBarText = new System.Windows.Forms.ToolStripStatusLabel();
+            this.button_sobel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.processedPic)).BeginInit();
             this.statusStrip.SuspendLayout();
@@ -102,11 +103,22 @@
             this.statusBarText.Size = new System.Drawing.Size(39, 17);
             this.statusBarText.Text = "Ready";
             // 
+            // button_sobel
+            // 
+            this.button_sobel.Location = new System.Drawing.Point(818, 9);
+            this.button_sobel.Name = "button_sobel";
+            this.button_sobel.Size = new System.Drawing.Size(75, 23);
+            this.button_sobel.TabIndex = 5;
+            this.button_sobel.Text = "Sobel";
+            this.button_sobel.UseVisualStyleBackColor = true;
+            this.button_sobel.Click += new System.EventHandler(this.button_sobel_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1310, 570);
+            this.Controls.Add(this.button_sobel);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.OtsuFilter);
             this.Controls.Add(this.loadFileButton);
@@ -133,6 +145,7 @@
         private System.Windows.Forms.Button OtsuFilter;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusBarText;
+        private System.Windows.Forms.Button button_sobel;
     }
 }
 
