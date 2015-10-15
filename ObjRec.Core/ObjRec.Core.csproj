@@ -43,16 +43,15 @@
   <ItemGroup>
     <Compile Include="Algorithms\ThresholdOtsuAlgorithm.cs" />
     <Compile Include="Filters\IFilter.cs" />
-	<Compile Include="Filters\MedianFilter.cs" />
+    <Compile Include="Filters\MedianFilter.cs" />
+    <Compile Include="Filters\Sobel\SobelFilter.cs" />
+    <Compile Include="Filters\Sobel\SobelMatrix.cs" />
     <Compile Include="Filters\ThresholdFilter.cs" />
     <Compile Include="Filters\ThresholdOtsuFilter.cs" />
     <Compile Include="Model\Pixel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Algorithms\" />
-    <Folder Include="Filters\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

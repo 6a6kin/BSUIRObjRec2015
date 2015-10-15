@@ -20,7 +20,7 @@ namespace ObjRec.Core.Filters
         {
             return Task.Run(() =>
             {
-                var sourceBitmap = new Bitmap(image);
+                var sourceBitmap = (Bitmap)image;
                 BitmapData sourceData = sourceBitmap.LockBits(new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
                 byte[] pixelBuffer = new byte[sourceData.Stride * sourceData.Height];

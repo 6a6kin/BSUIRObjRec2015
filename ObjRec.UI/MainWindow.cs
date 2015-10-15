@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using ObjRec.Core.Filters;
+using ObjRec.Core.Filters.Sobel;
 
 namespace ObjRec.UI
 {
@@ -29,6 +30,7 @@ namespace ObjRec.UI
                 try
                 {
                     sourcePic.Image = Image.FromFile(fileName);
+                    processedPic.Image = new Bitmap(sourcePic.Image);
                 }
                 catch (Exception)
                 {
@@ -58,7 +60,8 @@ namespace ObjRec.UI
 
             statusBarText.Text = @"Applying Otsu filter...";
 
-            processedPic.Image = await filter.Apply(sourcePic.Image);
+            sourcePic.Image = new Bitmap(processedPic.Image);
+            processedPic.Image = await filter.Apply(processedPic.Image);
 
             statusBarText.Text = $"Ready (Computed threshold : {filter.Threshold})";
         }
@@ -69,7 +72,20 @@ namespace ObjRec.UI
 
             statusBarText.Text = @"Applying Median filter...";
 
-            processedPic.Image = await filter.Apply(sourcePic.Image);
+            sourcePic.Image = new Bitmap(processedPic.Image);
+            processedPic.Image = await filter.Apply(processedPic.Image);
+
+            statusBarText.Text = @"Ready";
+        }
+
+        private async void sobelButton_Click(object sender, EventArgs e)
+        {
+            var filter = new SobelFilter();
+
+            statusBarText.Text = @"Applying Sobel filter...";
+
+            sourcePic.Image = new Bitmap(processedPic.Image);
+            processedPic.Image = await filter.Apply(processedPic.Image);
 
             statusBarText.Text = @"Ready";
         }
