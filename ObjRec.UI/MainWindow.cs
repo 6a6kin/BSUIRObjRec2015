@@ -36,10 +36,28 @@ namespace ObjRec.UI
         private async void OtsuFilter_Click(object sender, System.EventArgs e)
         {
             //var filter = new ThresholdOtsuFilter();
+            //
 
             statusBarText.Text = "Applying Otsu filter...";
 
             //processedPic.Image = await filter.Apply(sourcePic.Image);
+            //processedPic.Image = await filter.Apply(sourcePic.Image);
+
+            statusBarText.Text = "Ready";
+        }
+
+        private void MainWindow_Load(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private async void medianButton_Click(object sender, System.EventArgs e)
+        {
+            var filter = new MedianFilter();
+
+            statusBarText.Text = "Applying Otsu filter...";
+
+            processedPic.Image = await filter.Apply(sourcePic.Image);
 
             statusBarText.Text = "Ready";
         }
