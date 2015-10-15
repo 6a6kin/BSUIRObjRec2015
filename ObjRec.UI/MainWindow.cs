@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using ObjRec.Core.Filters;
@@ -16,15 +17,33 @@ namespace ObjRec.UI
             fileDialog.FileOk += (sender, args) =>
             {
                 filenameTextbox.Text = fileDialog.FileName;
+
+                LoadFile(filenameTextbox.Text);
             };
+        }
+
+        private void LoadFile(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                try
+                {
+                    sourcePic.Image = Image.FromFile(fileName);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show(
+                        @"Invalid image format. Select another file",
+                        @"Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void loadFileButton_Click(object sender, System.EventArgs e)
         {
-            if (File.Exists(filenameTextbox.Text))
-            {
-                sourcePic.Image = Image.FromFile(filenameTextbox.Text);
-            }
+            LoadFile(filenameTextbox.Text);
         }
 
         private void filenameTextbox_Click(object sender, System.EventArgs e)
@@ -35,13 +54,13 @@ namespace ObjRec.UI
 
         private async void OtsuFilter_Click(object sender, System.EventArgs e)
         {
-            //var filter = new ThresholdOtsuFilter();
+            var filter = new ThresholdOtsuFilter();
 
-            statusBarText.Text = "Applying Otsu filter...";
+            statusBarText.Text = @"Applying Otsu filter...";
 
-            //processedPic.Image = await filter.Apply(sourcePic.Image);
+            processedPic.Image = await filter.Apply(sourcePic.Image);
 
-            statusBarText.Text = "Ready";
+            statusBarText.Text = $"Ready (Computed threshold : {filter.Threshold})";
         }
     }
 }

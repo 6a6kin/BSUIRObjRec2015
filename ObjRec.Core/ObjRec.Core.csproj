@@ -45,6 +45,7 @@
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\ThresholdFilter.cs" />
     <Compile Include="Filters\ThresholdOtsuFilter.cs" />
+    <Compile Include="Model\Pixel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

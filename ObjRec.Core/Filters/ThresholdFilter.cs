@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Threading.Tasks;
+using ObjRec.Core.Model;
 
 namespace ObjRec.Core.Filters
 {
@@ -18,9 +19,9 @@ namespace ObjRec.Core.Filters
                 {
                     for (int y = 0; y < srcBitmap.Height; y++)
                     {
-                        var pixel = srcBitmap.GetPixel(x, y);
+                        var pixel = new Pixel(srcBitmap.GetPixel(x, y));
 
-                        int insensity = (int) (0.2126*pixel.R + 0.7152*pixel.G + 0.0722*pixel.B);
+                        int insensity = pixel.Intensity;
 
                         insensity = insensity > Threshold ? 255 : 0;
 

@@ -72,7 +72,7 @@
             this.loadFileButton.Name = "loadFileButton";
             this.loadFileButton.Size = new System.Drawing.Size(75, 23);
             this.loadFileButton.TabIndex = 2;
-            this.loadFileButton.Text = "Load file";
+            this.loadFileButton.Text = "Reload file";
             this.loadFileButton.UseVisualStyleBackColor = true;
             this.loadFileButton.Click += new System.EventHandler(this.loadFileButton_Click);
             // 

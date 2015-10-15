@@ -6,11 +6,11 @@ namespace ObjRec.Core.Filters
 {
     public class ThresholdOtsuFilter : ThresholdFilter
     {
-        public override Task<Image> Apply(Image image)
+        public async override Task<Image> Apply(Image image)
         {
-            Threshold = ThresholdOtsuAlgorithm.ComputeThreshold(image);
+            Threshold = await ThresholdOtsuAlgorithm.ComputeThreshold(image);
 
-            return base.Apply(image);
+            return await base.Apply(image);
         }
     }
 }
