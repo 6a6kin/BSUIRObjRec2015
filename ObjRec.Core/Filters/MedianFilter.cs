@@ -30,7 +30,7 @@ namespace ObjRec.Core.Filters
                 sourceBitmap.UnlockBits(sourceData);
 
                 var pixelTotal = new Pixel();
-                int window = WindowSize;
+                int window = WindowSize > 0 ? WindowSize : 5;
                 int winSide = WindowHalf;
                 int winCen = WindowCenter;
                 byte[] pixelRectR = new byte[window * window];

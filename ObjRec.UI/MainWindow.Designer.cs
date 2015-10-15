@@ -127,7 +127,6 @@
             this.Controls.Add(this.sourcePic);
             this.Name = "MainWindow";
             this.Text = "Object Recognition";
-            this.Load += new System.EventHandler(this.MainWindow_Load);
             ((System.ComponentModel.ISupportInitialize)(this.sourcePic)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.processedPic)).EndInit();
             this.statusStrip.ResumeLayout(false);

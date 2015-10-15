@@ -19,6 +19,10 @@ namespace ObjRec.Core.Model
             set { Red = Green = Blue = value; }
         }
 
+        public Pixel()
+        {
+        }
+
         public Pixel(Color color)
         {
             Red = color.R;

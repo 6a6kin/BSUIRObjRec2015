@@ -58,20 +58,20 @@ namespace ObjRec.UI
 
             statusBarText.Text = @"Applying Otsu filter...";
 
-            //processedPic.Image = await filter.Apply(sourcePic.Image);
+            processedPic.Image = await filter.Apply(sourcePic.Image);
 
             statusBarText.Text = $"Ready (Computed threshold : {filter.Threshold})";
         }
-    }
 
-    private async void medianButton_Click(object sender, System.EventArgs e)
-    {
-        var filter = new MedianFilter();
+        private async void medianButton_Click(object sender, System.EventArgs e)
+        {
+            var filter = new MedianFilter();
 
-        statusBarText.Text = "Applying Otsu filter...";
+            statusBarText.Text = @"Applying Median filter...";
 
-        processedPic.Image = await filter.Apply(sourcePic.Image);
+            processedPic.Image = await filter.Apply(sourcePic.Image);
 
-        statusBarText.Text = "Ready";
+            statusBarText.Text = @"Ready";
+        }
     }
 }
