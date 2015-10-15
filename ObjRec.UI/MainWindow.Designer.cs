@@ -35,6 +35,7 @@
             this.OtsuFilter = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusBarText = new System.Windows.Forms.ToolStripStatusLabel();
+            this.medianButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.processedPic)).BeginInit();
             this.statusStrip.SuspendLayout();
@@ -90,23 +91,34 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusBarText});
-            this.statusStrip.Location = new System.Drawing.Point(0, 548);
+            this.statusStrip.Location = new System.Drawing.Point(0, 544);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(1310, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1310, 26);
             this.statusStrip.TabIndex = 4;
             this.statusStrip.Text = "statusStrip1";
             // 
             // statusBarText
             // 
             this.statusBarText.Name = "statusBarText";
-            this.statusBarText.Size = new System.Drawing.Size(39, 17);
+            this.statusBarText.Size = new System.Drawing.Size(53, 21);
             this.statusBarText.Text = "Ready";
+            // 
+            // medianButton
+            // 
+            this.medianButton.Location = new System.Drawing.Point(818, 10);
+            this.medianButton.Name = "medianButton";
+            this.medianButton.Size = new System.Drawing.Size(79, 23);
+            this.medianButton.TabIndex = 5;
+            this.medianButton.Text = "Median";
+            this.medianButton.UseVisualStyleBackColor = true;
+            this.medianButton.Click += new System.EventHandler(this.medianButton_Click);
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1310, 570);
+            this.Controls.Add(this.medianButton);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.OtsuFilter);
             this.Controls.Add(this.loadFileButton);
@@ -115,6 +127,7 @@
             this.Controls.Add(this.sourcePic);
             this.Name = "MainWindow";
             this.Text = "Object Recognition";
+            this.Load += new System.EventHandler(this.MainWindow_Load);
             ((System.ComponentModel.ISupportInitialize)(this.sourcePic)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.processedPic)).EndInit();
             this.statusStrip.ResumeLayout(false);
@@ -133,6 +146,7 @@
         private System.Windows.Forms.Button OtsuFilter;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusBarText;
+        private System.Windows.Forms.Button medianButton;
     }
 }
 
