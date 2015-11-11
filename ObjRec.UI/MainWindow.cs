@@ -4,6 +4,8 @@ using System.IO;
 using System.Windows.Forms;
 using ObjRec.Core.Filters;
 using ObjRec.Core.Filters.Sobel;
+using Accord.Imaging;
+using AForge.Imaging.Filters;
 
 namespace ObjRec.UI
 {
@@ -100,6 +102,28 @@ namespace ObjRec.UI
             processedPic.Image = await filter.Apply(processedPic.Image);
 
             statusBarText.Text = @"Ready";
+        }
+
+        private void harris_Click(object sender, EventArgs e)
+         {
+            // Open a image
+            Bitmap image = new Bitmap(sourcePic.Image);
+
+            double sigma = 1.4;
+            float k = 0.04f;
+            float threshold = 20000;
+            // Create a new Harris Corners Detector using the given parameters
+            HarrisCornersDetector harris = new HarrisCornersDetector(k)
+            {
+                Threshold = threshold,
+                Sigma = sigma
+            };
+
+            // Create a new AForge's Corner Marker Filter
+            CornersMarker corners = new CornersMarker(harris, Color.White);
+
+            // Apply the filter and display it on a picturebox
+            processedPic.Image = corners.Apply(image);
         }
     }
 }
