@@ -39,6 +39,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.sobelButton = new System.Windows.Forms.Button();
+            this.sharpButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.processedPic)).BeginInit();
             this.statusStrip.SuspendLayout();
@@ -158,6 +159,7 @@
             this.flowLayoutPanel1.Controls.Add(this.OtsuFilter);
             this.flowLayoutPanel1.Controls.Add(this.medianButton);
             this.flowLayoutPanel1.Controls.Add(this.sobelButton);
+            this.flowLayoutPanel1.Controls.Add(this.sharpButton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(661, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -174,6 +176,16 @@
             this.sobelButton.Text = "Sobel";
             this.sobelButton.UseVisualStyleBackColor = true;
             this.sobelButton.Click += new System.EventHandler(this.sobelButton_Click);
+            // 
+            // sharpButton
+            // 
+            this.sharpButton.Location = new System.Drawing.Point(331, 3);
+            this.sharpButton.Name = "sharpButton";
+            this.sharpButton.Size = new System.Drawing.Size(75, 23);
+            this.sharpButton.TabIndex = 7;
+            this.sharpButton.Text = "Sharpness";
+            this.sharpButton.UseVisualStyleBackColor = true;
+            this.sharpButton.Click += new System.EventHandler(this.sharpButton_Click);
             // 
             // MainWindow
             // 
@@ -209,6 +221,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button sobelButton;
+        private System.Windows.Forms.Button sharpButton;
     }
 }
 

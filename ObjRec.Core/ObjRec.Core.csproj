@@ -44,6 +44,7 @@
     <Compile Include="Algorithms\ThresholdOtsuAlgorithm.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="Filters\MedianFilter.cs" />
+    <Compile Include="Filters\SharpnessFilter.cs" />
     <Compile Include="Filters\Sobel\SobelFilter.cs" />
     <Compile Include="Filters\Sobel\SobelMatrix.cs" />
     <Compile Include="Filters\ThresholdFilter.cs" />

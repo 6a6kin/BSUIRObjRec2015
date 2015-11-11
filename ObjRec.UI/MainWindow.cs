@@ -89,5 +89,17 @@ namespace ObjRec.UI
 
             statusBarText.Text = @"Ready";
         }
+
+        private async void sharpButton_Click(object sender, EventArgs e)
+        {
+            var filter = new SharpnessFilter();
+
+            statusBarText.Text = @"Applying Sharpness filter...";
+
+            sourcePic.Image = new Bitmap(processedPic.Image);
+            processedPic.Image = await filter.Apply(processedPic.Image);
+
+            statusBarText.Text = @"Ready";
+        }
     }
 }
