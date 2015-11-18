@@ -40,6 +40,7 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.sobelButton = new System.Windows.Forms.Button();
             this.sharpButton = new System.Windows.Forms.Button();
+            this.siftButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.processedPic)).BeginInit();
             this.statusStrip.SuspendLayout();
@@ -160,6 +161,7 @@
             this.flowLayoutPanel1.Controls.Add(this.medianButton);
             this.flowLayoutPanel1.Controls.Add(this.sobelButton);
             this.flowLayoutPanel1.Controls.Add(this.sharpButton);
+            this.flowLayoutPanel1.Controls.Add(this.siftButton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(661, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -186,6 +188,16 @@
             this.sharpButton.Text = "Sharpness";
             this.sharpButton.UseVisualStyleBackColor = true;
             this.sharpButton.Click += new System.EventHandler(this.sharpButton_Click);
+            // 
+            // siftButton
+            // 
+            this.siftButton.Location = new System.Drawing.Point(412, 3);
+            this.siftButton.Name = "siftButton";
+            this.siftButton.Size = new System.Drawing.Size(75, 23);
+            this.siftButton.TabIndex = 7;
+            this.siftButton.Text = "SIFT";
+            this.siftButton.UseVisualStyleBackColor = true;
+            this.siftButton.Click += new System.EventHandler(this.siftButton_Click);
             // 
             // MainWindow
             // 
@@ -222,6 +234,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button sobelButton;
         private System.Windows.Forms.Button sharpButton;
+        private System.Windows.Forms.Button siftButton;
     }
 }
 

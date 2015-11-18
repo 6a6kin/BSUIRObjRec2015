@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Emgu.CV;
+using Emgu.CV.Structure;
 using ObjRec.Core.Filters;
 using ObjRec.Core.Filters.Sobel;
+using SiftLib;
 
 namespace ObjRec.UI
 {
@@ -98,6 +104,30 @@ namespace ObjRec.UI
 
             sourcePic.Image = new Bitmap(processedPic.Image);
             processedPic.Image = await filter.Apply(processedPic.Image);
+
+            statusBarText.Text = @"Ready";
+        }
+
+        private async void siftButton_Click(object sender, EventArgs e)
+        {
+            var siftAlg = new Sift();
+
+            statusBarText.Text = @"Applying SIFT algorithm...";
+
+            sourcePic.Image = new Bitmap(processedPic.Image);
+
+            Image<Gray, float> image = new Image<Gray, float>(new Bitmap(processedPic.Image));
+
+            List<Feature> features = null;
+
+            await Task.Run(() => features = siftAlg.SiftFeatures(image));
+
+            var g = Graphics.FromImage(processedPic.Image);
+            foreach (var feature in features)
+            {
+                g.DrawEllipse(Pens.Chartreuse, (float)feature.x, (float)feature.y, 5, 5);
+            }
+            processedPic.Refresh();
 
             statusBarText.Text = @"Ready";
         }

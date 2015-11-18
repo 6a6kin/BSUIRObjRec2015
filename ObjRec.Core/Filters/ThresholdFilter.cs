@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.Threading.Tasks;
 using ObjRec.Core.Model;
 
@@ -23,13 +24,13 @@ namespace ObjRec.Core.Filters
 
                         int insensity = pixel.Intensity;
 
-                        insensity = insensity > Threshold ? 255 : 0;
+                        var color = insensity > Threshold ? Color.White : Color.Black;
 
-                        resultBitmap.SetPixel(x, y, Color.FromArgb(insensity, insensity, insensity));
+                        resultBitmap.SetPixel(x, y, color);
                     }
                 }
 
-                return (Image) resultBitmap;
+                return (Image)resultBitmap;
             });
         }
     }

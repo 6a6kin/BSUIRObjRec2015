@@ -6,7 +6,7 @@ namespace ObjRec.Core.Filters
 {
     public class ThresholdOtsuFilter : ThresholdFilter
     {
-        public async override Task<Image> Apply(Image image)
+        public override async Task<Image> Apply(Image image)
         {
             Threshold = await ThresholdOtsuAlgorithm.ComputeThreshold(image);
 

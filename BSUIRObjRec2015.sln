@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjRec.UI", "ObjRec.UI\ObjR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjRec.Core", "ObjRec.Core\ObjRec.Core.csproj", "{3FB0AE8D-3F29-4EFF-8647-5C7ACC05CEC8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SifLib", "SiftLib\SifLib.csproj", "{5E58E7CF-21C1-4561-B0F4-5944F2C3CAE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3FB0AE8D-3F29-4EFF-8647-5C7ACC05CEC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FB0AE8D-3F29-4EFF-8647-5C7ACC05CEC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FB0AE8D-3F29-4EFF-8647-5C7ACC05CEC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E58E7CF-21C1-4561-B0F4-5944F2C3CAE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E58E7CF-21C1-4561-B0F4-5944F2C3CAE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E58E7CF-21C1-4561-B0F4-5944F2C3CAE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E58E7CF-21C1-4561-B0F4-5944F2C3CAE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
