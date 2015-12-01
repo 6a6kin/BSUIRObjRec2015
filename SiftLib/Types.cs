@@ -75,33 +75,31 @@ namespace SiftLib
         {
             descr = new double[FeatureMaxD];
         }
-        
-        #region ICloneable Members
 
         public object Clone()
         {
-            Feature feat = new Feature();
-            feat.a = a;
-            feat.b = b;
-            feat.bck_match = bck_match;
-            feat.c = c;
-            feat.category = category;
-            feat.d = d;
-            feat.descr = (double[]) descr.Clone();
-            feat.feature_data = (DetectionData)feature_data.Clone();
-            feat.fwd_match = fwd_match;
-            feat.img_pt = img_pt;
-            feat.mdl_match = mdl_match;
-            feat.mdl_pt = mdl_pt;
-            feat.ori = ori;
-            feat.scl = scl;
-            feat.type = type;
-            feat.x = x;
-            feat.y = y;
+            Feature feat = new Feature
+            {
+                a = a,
+                b = b,
+                bck_match = bck_match,
+                c = c,
+                category = category,
+                d = d,
+                descr = (double[]) descr.Clone(),
+                feature_data = (DetectionData) feature_data.Clone(),
+                fwd_match = fwd_match,
+                img_pt = img_pt,
+                mdl_match = mdl_match,
+                mdl_pt = mdl_pt,
+                ori = ori,
+                scl = scl,
+                type = type,
+                x = x,
+                y = y
+            };
             return feat;
         }
-
-        #endregion
     }
 
     public enum FeatureType

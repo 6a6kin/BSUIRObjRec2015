@@ -100,11 +100,11 @@ namespace SiftLib
             normalize_descr(feat);
 
             /* convert floating-point descriptor to integer valued descriptor */
-            for (i = 0; i < k; i++)
-            {
-                var intVal = (int) (SiftIntDescrFctr*feat.descr[i]);
-                feat.descr[i] = Math.Min(255, intVal);
-            }
+            //for (i = 0; i < k; i++)
+            //{
+            //    var intVal = (int) (SiftIntDescrFctr*feat.descr[i]);
+            //    feat.descr[i] = Math.Min(255, intVal);
+            //}
         }
 
         private void normalize_descr(Feature feat)

@@ -37,15 +37,18 @@
             this.statusBarText = new System.Windows.Forms.ToolStripStatusLabel();
             this.medianButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.samplePic1 = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.sobelButton = new System.Windows.Forms.Button();
             this.sharpButton = new System.Windows.Forms.Button();
             this.siftButton = new System.Windows.Forms.Button();
+            this.siftDescSize = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.processedPic)).BeginInit();
             this.statusStrip.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.siftDescSize)).BeginInit();
             this.SuspendLayout();
             // 
             // sourcePic
@@ -56,7 +59,7 @@
             this.sourcePic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.sourcePic.Location = new System.Drawing.Point(3, 43);
             this.sourcePic.Name = "sourcePic";
-            this.sourcePic.Size = new System.Drawing.Size(652, 571);
+            this.sourcePic.Size = new System.Drawing.Size(659, 587);
             this.sourcePic.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.sourcePic.TabIndex = 0;
             this.sourcePic.TabStop = false;
@@ -67,9 +70,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.processedPic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.processedPic.Location = new System.Drawing.Point(661, 43);
+            this.processedPic.Location = new System.Drawing.Point(668, 43);
             this.processedPic.Name = "processedPic";
-            this.processedPic.Size = new System.Drawing.Size(652, 571);
+            this.processedPic.Size = new System.Drawing.Size(659, 587);
             this.processedPic.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.processedPic.TabIndex = 0;
             this.processedPic.TabStop = false;
@@ -79,7 +82,7 @@
             this.filenameTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.filenameTextbox.Location = new System.Drawing.Point(3, 10);
             this.filenameTextbox.Name = "filenameTextbox";
-            this.filenameTextbox.Size = new System.Drawing.Size(652, 20);
+            this.filenameTextbox.Size = new System.Drawing.Size(659, 20);
             this.filenameTextbox.TabIndex = 1;
             this.filenameTextbox.Click += new System.EventHandler(this.filenameTextbox_Click);
             // 
@@ -110,9 +113,9 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusBarText});
-            this.statusStrip.Location = new System.Drawing.Point(0, 632);
+            this.statusStrip.Location = new System.Drawing.Point(0, 688);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(1340, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1354, 22);
             this.statusStrip.TabIndex = 4;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -142,17 +145,28 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.samplePic1, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.processedPic, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.filenameTextbox, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.sourcePic, 0, 1);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1316, 617);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1330, 673);
             this.tableLayoutPanel1.TabIndex = 6;
+            // 
+            // samplePic1
+            // 
+            this.samplePic1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.samplePic1.Location = new System.Drawing.Point(3, 643);
+            this.samplePic1.Name = "samplePic1";
+            this.samplePic1.Size = new System.Drawing.Size(659, 20);
+            this.samplePic1.TabIndex = 3;
+            this.samplePic1.Click += new System.EventHandler(this.samplePic1_Click);
             // 
             // flowLayoutPanel1
             // 
@@ -162,10 +176,11 @@
             this.flowLayoutPanel1.Controls.Add(this.sobelButton);
             this.flowLayoutPanel1.Controls.Add(this.sharpButton);
             this.flowLayoutPanel1.Controls.Add(this.siftButton);
+            this.flowLayoutPanel1.Controls.Add(this.siftDescSize);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(661, 3);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(668, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(652, 34);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(659, 34);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // sobelButton
@@ -199,11 +214,29 @@
             this.siftButton.UseVisualStyleBackColor = true;
             this.siftButton.Click += new System.EventHandler(this.siftButton_Click);
             // 
+            // siftDescSize
+            // 
+            this.siftDescSize.Location = new System.Drawing.Point(493, 3);
+            this.siftDescSize.Maximum = new decimal(new int[] {
+            1004,
+            0,
+            0,
+            0});
+            this.siftDescSize.Name = "siftDescSize";
+            this.siftDescSize.Size = new System.Drawing.Size(49, 20);
+            this.siftDescSize.TabIndex = 8;
+            this.siftDescSize.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.siftDescSize.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1340, 654);
+            this.ClientSize = new System.Drawing.Size(1354, 710);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.statusStrip);
             this.Name = "MainWindow";
@@ -215,6 +248,7 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.siftDescSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,6 +269,8 @@
         private System.Windows.Forms.Button sobelButton;
         private System.Windows.Forms.Button sharpButton;
         private System.Windows.Forms.Button siftButton;
+        private System.Windows.Forms.NumericUpDown siftDescSize;
+        private System.Windows.Forms.TextBox samplePic1;
     }
 }
 
