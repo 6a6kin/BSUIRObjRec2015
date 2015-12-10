@@ -25,9 +25,6 @@ namespace ObjRec.Core.Algorithms
                 }
 
                 double P1 = 0.0d;
-                double P2 = 0.0d;
-                double mu1;
-                double mu2;
                 double ip = 0.0d;
                 double sumip = hist.Select((v, t) => t*v/n).Sum();
                 
@@ -37,12 +34,12 @@ namespace ObjRec.Core.Algorithms
                 for (int t = 0; t < 256; t++)
                 {
                     P1 += hist[t]/n;
-                    P2 = 1 - P1;
+                    var P2 = 1 - P1;
 
                     ip += t* hist[t] / n;
 
-                    mu1 = ip/P1;
-                    mu2 = (sumip - ip)/P2;
+                    var mu1 = ip/P1;
+                    var mu2 = (sumip - ip)/P2;
 
                     var sigma = (int) (P1*P2*(mu1 - mu2)*(mu1 - mu2));
                     if (maxSigma < sigma)

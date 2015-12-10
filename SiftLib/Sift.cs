@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using Emgu.CV.CvEnum;
 using System.Drawing;
 
 namespace SiftLib
@@ -396,7 +397,7 @@ namespace SiftLib
             {
                 sigDiff = (float) Math.Sqrt(sigma*sigma - SiftInitSigma*SiftInitSigma*4);
                 dbl = new Image<Gray, float>(new Size(img.Width*2, img.Height*2));
-                dbl = gray.Resize(dbl.Width, dbl.Height, Emgu.CV.CvEnum.INTER.CV_INTER_CUBIC);
+                dbl = gray.Resize(dbl.Width, dbl.Height, INTER.CV_INTER_CUBIC);
                 dbl = dbl.SmoothGaussian(0, 0, sigDiff, sigDiff);
                 return dbl;
             }
@@ -470,7 +471,7 @@ namespace SiftLib
 
         private Image<Gray, float> Downsample(Image<Gray, float> img)
         {
-            return img.Resize(img.Width / 2, img.Height / 2, Emgu.CV.CvEnum.INTER.CV_INTER_NN);
+            return img.Resize(img.Width / 2, img.Height / 2, INTER.CV_INTER_NN);
         }
 
         private Image<Gray, float>[,] build_dog_pyr(Image<Gray, float>[,] gaussPyr, int octvs, int intvls)
@@ -625,12 +626,12 @@ namespace SiftLib
             hInv = h.Clone();
 
 
-            CvInvoke.cvInvert(h, hInv.Ptr, Emgu.CV.CvEnum.INVERT_METHOD.CV_SVD);
+            CvInvoke.cvInvert(h, hInv.Ptr, SOLVE_METHOD.CV_SVD);
             unsafe
             {
                 fixed (double* a = &x[0])
                 {
-                    CvInvoke.cvInitMatHeader(X.Ptr, 3, 1, Emgu.CV.CvEnum.MAT_DEPTH.CV_64F, new IntPtr(a), 0x7fffffff);
+                    CvInvoke.cvInitMatHeader(X.Ptr, 3, 1, MAT_DEPTH.CV_64F, new IntPtr(a), 0x7fffffff);
                 }
             }
             CvInvoke.cvGEMM(hInv.Ptr, dD.Ptr, -1, IntPtr.Zero, 0, X.Ptr, 0);
@@ -715,18 +716,18 @@ namespace SiftLib
             {
                 fixed (double* a = &x[0])
                 {
-                    CvInvoke.cvInitMatHeader(X.Ptr, 3, 1, Emgu.CV.CvEnum.MAT_DEPTH.CV_64F, new IntPtr(a), 0x7fffffff);
+                    CvInvoke.cvInitMatHeader(X.Ptr, 3, 1, MAT_DEPTH.CV_64F, new IntPtr(a), 0x7fffffff);
                 }
             }
             unsafe
             {
                 fixed (double* a = &t[0])
                 {
-                    CvInvoke.cvInitMatHeader(T.Ptr, 1, 1, Emgu.CV.CvEnum.MAT_DEPTH.CV_64F, new IntPtr(a), 0x7fffffff);
+                    CvInvoke.cvInitMatHeader(T.Ptr, 1, 1, MAT_DEPTH.CV_64F, new IntPtr(a), 0x7fffffff);
                 }
             }
             var dD = deriv_3D(dogPyr, octv, intvl, r, c);
-            CvInvoke.cvGEMM(dD.Ptr, X.Ptr, 1, IntPtr.Zero, 0, T.Ptr, Emgu.CV.CvEnum.GEMM_TYPE.CV_GEMM_A_T);
+            CvInvoke.cvGEMM(dD.Ptr, X.Ptr, 1, IntPtr.Zero, 0, T.Ptr, GEMM_TYPE.CV_GEMM_A_T);
             //cvReleaseMat( &dD );
 
             return dogPyr[octv, intvl][r, c].Intensity + t[0]*0.5;
