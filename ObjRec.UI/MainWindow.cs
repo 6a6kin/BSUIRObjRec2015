@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Accord.MachineLearning;
+using Accord.Math;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 using ObjRec.Core.Algorithms;
 using ObjRec.Core.Filters;
 using ObjRec.Core.Filters.Sobel;
@@ -21,6 +23,8 @@ namespace ObjRec.UI
         private readonly OpenFileDialog fileDialog = new OpenFileDialog { Filter = @"Picture Files (.bmp)|*.bmp|All Files (*.*)|*.*" };
         private readonly List<Image> modelImages = Directory.EnumerateFiles("./models", "*.jpg").Select(Image.FromFile).ToList();
         private readonly List<Image> rotatedImages = new List<Image>();
+
+        private KMeans kmeans;
 
         private int sz = 60;
 
@@ -36,6 +40,8 @@ namespace ObjRec.UI
             };
 
             ModelImages(modelImages);
+
+            ApplySift(new Bitmap(100,100), new Bitmap(100,100)).MakeTransparent();
         }
 
         private void ModelImages(List<Image> images)
@@ -136,7 +142,7 @@ namespace ObjRec.UI
             statusBarText.Text = @"Applying SIFT algorithm...";
 
             sourcePic.Image = new Bitmap(processedPic.Image);
-            var processed = new Image<Gray, byte>((Bitmap) processedPic.Image);
+            var processed = new Image<Gray, byte>((Bitmap)processedPic.Image);
 
             rotatedImages.Clear();
             foreach (var modelImage in modelImages)
@@ -144,10 +150,20 @@ namespace ObjRec.UI
                 rotatedImages.Add(ApplySift(new Image<Gray, byte>((Bitmap)modelImage), processed).Bitmap);
             }
 
+            var descs = modelImages.Select(i => GetDescriptors(i.ToImage())).Aggregate((x, d) => d.ConcateVertical(x)).Data.ToDouble().ToJaggedArray();
+
+            kmeans = new KMeans(descs.Length/modelImages.Count/15);
+            kmeans.Compute(descs);
+
+            var picDescs = modelImages.Select(i => MakePicDescriptor(i.ToImage())).ToList();
+
+
+
             listView1.SmallImageList.Images.Clear();
 
             listView1.SmallImageList.Images.AddRange(rotatedImages.ToArray());
             listView1.Refresh();
+
             //DrawAllDescOnProcessedPic(pairs);
 
             statusBarText.Text = @"Ready";
@@ -276,45 +292,41 @@ namespace ObjRec.UI
             sz = (int)siftDescSize.Value;
         }
 
-        public static Image<Bgr, byte> ApplySift(Image<Gray, byte> modelImage, Image<Gray, byte> observedImage)
+        public Image<Bgr, byte> ApplySift(Image<Gray, byte> modelImage, Image<Gray, byte> observedImage)
         {
             HomographyMatrix homography = null;
 
-            var surfCPU = new SURFDetector(500, false);
+            var surfCpu = new SURFDetector(500, false);
 
             const int k = 2;
             const double uniquenessThreshold = 0.8d;
+            
+            var modelKeyPoints = surfCpu.DetectKeyPointsRaw(modelImage, null);
+            Matrix<float> modelDescriptors = surfCpu.ComputeDescriptorsRaw(modelImage, null, modelKeyPoints);
+            
+            var observedKeyPoints = surfCpu.DetectKeyPointsRaw(observedImage, null);
+            Matrix<float> observedDescriptors = surfCpu.ComputeDescriptorsRaw(observedImage, null, observedKeyPoints);
+            var matcher = new BruteForceMatcher<float>(DistanceType.L2);
+            matcher.Add(modelDescriptors);
+
+            var indices = new Matrix<int>(observedDescriptors.Rows, k);
+            Matrix<byte> mask;
+            using (var dist = new Matrix<float>(observedDescriptors.Rows, k))
             {
-                //extract features from the object image
-                var modelKeyPoints = surfCPU.DetectKeyPointsRaw(modelImage, null);
-                Matrix<float> modelDescriptors = surfCPU.ComputeDescriptorsRaw(modelImage, null, modelKeyPoints);
-
-                // extract features from the observed image
-                var observedKeyPoints = surfCPU.DetectKeyPointsRaw(observedImage, null);
-                Matrix<float> observedDescriptors = surfCPU.ComputeDescriptorsRaw(observedImage, null, observedKeyPoints);
-                var matcher = new BruteForceMatcher<float>(DistanceType.L2);
-                matcher.Add(modelDescriptors);
-
-                var indices = new Matrix<int>(observedDescriptors.Rows, k);
-                Matrix<byte> mask;
-                using (var dist = new Matrix<float>(observedDescriptors.Rows, k))
-                {
-                    matcher.KnnMatch(observedDescriptors, indices, dist, k, null);
-                    mask = new Matrix<byte>(dist.Rows, 1);
-                    mask.SetValue(255);
-                    Features2DToolbox.VoteForUniqueness(dist, uniquenessThreshold, mask);
-                }
-
-                int nonZeroCount = CvInvoke.cvCountNonZero(mask);
-                if (nonZeroCount >= 4)
-                {
-                    nonZeroCount = Features2DToolbox.VoteForSizeAndOrientation(modelKeyPoints, observedKeyPoints, indices, mask, 1.5, 20);
-                    if (nonZeroCount >= 4)
-                        homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(modelKeyPoints, observedKeyPoints, indices, mask, 2);
-                }
+                matcher.KnnMatch(observedDescriptors, indices, dist, k, null);
+                mask = new Matrix<byte>(dist.Rows, 1);
+                mask.SetValue(255);
+                Features2DToolbox.VoteForUniqueness(dist, uniquenessThreshold, mask);
             }
 
-            //Draw the matched keypoints
+            int nonZeroCount = CvInvoke.cvCountNonZero(mask);
+            if (nonZeroCount >= 4)
+            {
+                nonZeroCount = Features2DToolbox.VoteForSizeAndOrientation(modelKeyPoints, observedKeyPoints, indices, mask, 1.5, 20);
+                if (nonZeroCount >= 4)
+                    homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(modelKeyPoints, observedKeyPoints, indices, mask, 2);
+            }
+            
             var result = new Image<Bgr, byte>(observedImage.Bitmap);
 
             //Features2DToolbox.DrawMatches(modelImage, modelKeyPoints, observedImage, observedKeyPoints,
@@ -322,8 +334,6 @@ namespace ObjRec.UI
 
             if (homography != null)
             {
-
-                //draw a rectangle along the projected model
                 Rectangle rect = modelImage.ROI;
                 PointF[] pts = {
                     new PointF(rect.Left, rect.Bottom),
@@ -334,7 +344,7 @@ namespace ObjRec.UI
                 homography.ProjectPoints(pts);
 
                 //var rounded = Array.ConvertAll(pts, Point.Round);
-                
+
                 var invMat = homography.Clone();
                 CvInvoke.cvInvert(homography.Ptr, invMat.Ptr, SOLVE_METHOD.CV_LU);
                 result = result.WarpPerspective(invMat, INTER.CV_INTER_LINEAR, WARP.CV_WARP_FILL_OUTLIERS, new Bgr(0, 0, 0));
@@ -342,6 +352,137 @@ namespace ObjRec.UI
             }
 
             return result;
+        }
+
+        private int GetQuarter(MKeyPoint point, RectangleF roi)
+        {
+            var q1 = RectangleF.FromLTRB(roi.Left, roi.Top, roi.Right/4.0f, roi.Bottom/4.0f);
+            var q2 = RectangleF.FromLTRB(roi.Left/4.0f, roi.Top, roi.Right, roi.Bottom/4.0f);
+            var q3 = RectangleF.FromLTRB(roi.Left, roi.Top/4.0f, roi.Right/4.0f, roi.Bottom);
+            var q4 = RectangleF.FromLTRB(roi.Left/4.0f, roi.Top, roi.Right/4.0f, roi.Bottom);
+
+            if (q1.Contains(point.Point))
+                return 1;
+            if (q2.Contains(point.Point))
+                return 2;
+            if (q3.Contains(point.Point))
+                return 3;
+            if (q4.Contains(point.Point))
+                return 4;
+
+            return 0;
+        }
+
+        private int GetOctal(MKeyPoint point, RectangleF roi)
+        {
+            var q1 = RectangleF.FromLTRB(roi.Left, roi.Top, roi.Right/4.0f, roi.Bottom/4.0f);
+            var q2 = RectangleF.FromLTRB(roi.Left/4.0f, roi.Top, roi.Right, roi.Bottom/4.0f);
+            var q3 = RectangleF.FromLTRB(roi.Left, roi.Top/4.0f, roi.Right/4.0f, roi.Bottom);
+            var q4 = RectangleF.FromLTRB(roi.Left/4.0f, roi.Top, roi.Right/4.0f, roi.Bottom);
+
+            int q = GetQuarter(point, roi);
+            switch (q)
+            {
+                case 1:
+                    return 4 + GetQuarter(point, q1);
+                case 2:
+                    return 8 + GetQuarter(point, q2);
+                case 3:
+                    return 12 + GetQuarter(point, q3);
+                case 4:
+                    return 16 + GetQuarter(point, q4);
+                default:
+                    return 0;
+            }
+        }
+
+        private IEnumerable<IEnumerable<MKeyPoint>> SplitByQuarter(VectorOfKeyPoint ocutKeyPoints, Rectangle roi)
+        {
+            return Enumerable.Range(0, 21)
+                .Select(i => ocutKeyPoints.ToArray().Where(kp => GetPart(i, kp, roi) == i));
+        }
+
+        private int GetPart(int i, MKeyPoint ocutKeyPoint, Rectangle roi)
+        {
+            if (i < 1)
+                return 0;
+
+            if (i < 5)
+            {
+                return GetQuarter(ocutKeyPoint, roi);
+            }
+
+            return GetOctal(ocutKeyPoint, roi);
+        }
+
+        private double[][] MakePicDescriptor(Image<Bgr, byte> image)
+        {
+            var surfCpu = new SURFDetector(500, false);
+
+            VectorOfKeyPoint ocutKeyPoints = surfCpu.DetectKeyPointsRaw(new Image<Gray, byte>(image.Bitmap), null);
+
+            Matrix<float> ocutDescriptors = surfCpu.ComputeDescriptorsRaw(new Image<Gray, byte>(image.Bitmap), null, ocutKeyPoints);
+
+            var ar = ocutKeyPoints.ToArray().ToList();
+
+            var m = ocutDescriptors.GetRow(ar.IndexOf(ocutKeyPoints[1]));
+
+            var gr = SplitByQuarter(ocutKeyPoints, image.ROI)
+                .Select(kps => kps.Select(kp => ocutDescriptors.GetRow(ar.IndexOf(kp))))
+                .Select(kps => 
+                kps.Any() ? kps.Aggregate((a, r) => 
+                a.ConcateVertical(r)) : new Matrix<float>(1, m.Cols));
+            
+            return gr.Select(GetDistribution).ToArray();
+        }
+
+        private double[] GetDistribution(Matrix<float> descriptors)
+        {
+            int[] assign = kmeans.Clusters.Nearest(descriptors.Data.ToDouble().ToJaggedArray());
+            
+            return Enumerable.Range(0, kmeans.K)
+                    .Select(c => (double)assign.Count(a => a == c))
+                    .ToArray();
+        }
+
+        private Matrix<float> GetDescriptors(Image<Bgr, byte> image)
+        {
+            var surfCpu = new SURFDetector(500, false);
+
+            VectorOfKeyPoint ocutKeyPoints = surfCpu.DetectKeyPointsRaw(new Image<Gray, byte>(image.Bitmap), null);
+
+            return surfCpu.ComputeDescriptorsRaw(new Image<Gray, byte>(image.Bitmap), null, ocutKeyPoints);
+        }
+    }
+
+    internal static class ExtensionMethods
+    {
+        internal static T[][] ToJaggedArray<T>(this T[,] twoDimensionalArray)
+        {
+            int rowsFirstIndex = twoDimensionalArray.GetLowerBound(0);
+            int rowsLastIndex = twoDimensionalArray.GetUpperBound(0);
+            int numberOfRows = rowsLastIndex + 1;
+
+            int columnsFirstIndex = twoDimensionalArray.GetLowerBound(1);
+            int columnsLastIndex = twoDimensionalArray.GetUpperBound(1);
+            int numberOfColumns = columnsLastIndex + 1;
+
+            T[][] jaggedArray = new T[numberOfRows][];
+            for (int i = rowsFirstIndex; i <= rowsLastIndex; i++)
+            {
+                jaggedArray[i] = new T[numberOfColumns];
+
+                for (int j = columnsFirstIndex; j <= columnsLastIndex; j++)
+                {
+                    jaggedArray[i][j] = twoDimensionalArray[i, j];
+                }
+            }
+            return jaggedArray;
+        }
+
+        internal static Image<Bgr, byte> ToImage(this Image image)
+        {
+            return new Image<Bgr, byte>((Bitmap) image);
         }
     }
 }
