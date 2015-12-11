@@ -164,7 +164,7 @@ namespace ObjRec.UI
                 string vector = "";
                 for (int i = 0; i < 21; i++)
                 {
-                    for (int j = 0; j < 64; j++)
+                    for (int j = 0; j < descs.Length / modelImages.Count / 15; j++)
                     {
                         vector += MassCount[i][j].ToString();
                         vector += " ";
