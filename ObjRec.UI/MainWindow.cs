@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Accord.MachineLearning;
 using Accord.Math;
+using AForge;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Features2D;
@@ -157,7 +158,24 @@ namespace ObjRec.UI
 
             var picDescs = modelImages.Select(i => MakePicDescriptor(i.ToImage())).ToList();
 
-
+            for (int count = 0; count < listView1.Items.Count; count++)
+            {
+                var MassCount = picDescs[count];
+                string vector = "";
+                for (int i = 0; i < 21; i++)
+                {
+                    for (int j = 0; j < 64; j++)
+                    {
+                        vector += MassCount[i][j].ToString();
+                        vector += " ";
+                        if (j == 0)
+                        {
+                            vector += "\n";
+                        }
+                    }
+                }
+                listView1.Items[count].Text = vector;
+            }
 
             listView1.SmallImageList.Images.Clear();
 
