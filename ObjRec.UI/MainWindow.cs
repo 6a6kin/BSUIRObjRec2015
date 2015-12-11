@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Accord.MachineLearning;
 using Accord.Math;
-using AForge;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Features2D;
@@ -22,7 +22,7 @@ namespace ObjRec.UI
     public partial class MainWindow : Form
     {
         private readonly OpenFileDialog fileDialog = new OpenFileDialog { Filter = @"Picture Files (.bmp)|*.bmp|All Files (*.*)|*.*" };
-        private readonly List<Image> modelImages = Directory.EnumerateFiles("./models", "*.jpg").Select(Image.FromFile).ToList();
+        private readonly List<Image> modelImages = Directory.EnumerateFiles("./models", "*.jpg").Union(Directory.EnumerateFiles("./models", "*.png")).Select(Image.FromFile).ToList();
         private readonly List<Image> rotatedImages = new List<Image>();
 
         private KMeans kmeans;
@@ -42,7 +42,7 @@ namespace ObjRec.UI
 
             ModelImages(modelImages);
 
-            ApplySift(new Bitmap(100,100), new Bitmap(100,100)).MakeTransparent();
+            ApplySift(new Bitmap(100, 100), new Bitmap(100, 100)).MakeTransparent();
         }
 
         private void ModelImages(List<Image> images)
@@ -51,7 +51,7 @@ namespace ObjRec.UI
             listView1.SmallImageList.Images.AddRange(images.ToArray());
 
             listView1.Items.Clear();
-            listView1.Items.AddRange(images.Select((image, i) => new ListViewItem { ImageIndex = i }).ToArray());
+            listView1.Items.AddRange(images.Select((image, i) => new ListViewItem { ImageIndex = i}).ToArray());
         }
 
         private void LoadFile(string fileName)
@@ -148,38 +148,26 @@ namespace ObjRec.UI
             rotatedImages.Clear();
             foreach (var modelImage in modelImages)
             {
-                rotatedImages.Add(ApplySift(new Image<Gray, byte>((Bitmap)modelImage), processed).Bitmap);
+                var img = ApplySift(new Image<Gray, byte>((Bitmap) modelImage), processed);
+                if (img != null)
+                    rotatedImages.Add(img.Bitmap);
             }
+
+            ModelImages(rotatedImages);
 
             var descs = modelImages.Select(i => GetDescriptors(i.ToImage())).Aggregate((x, d) => d.ConcateVertical(x)).Data.ToDouble().ToJaggedArray();
 
-            kmeans = new KMeans(descs.Length/modelImages.Count/15);
+            kmeans = new KMeans(descs.Length / modelImages.Count / 15);
             kmeans.Compute(descs);
 
-            var picDescs = modelImages.Select(i => MakePicDescriptor(i.ToImage())).ToList();
+            var picDescs = rotatedImages.Select(i => MakePicDescriptor(i.ToImage())).ToList();
 
-            for (int count = 0; count < listView1.Items.Count; count++)
+            for (var i = 0; i < listView1.Items.Count; i++)
             {
-                var MassCount = picDescs[count];
-                string vector = "";
-                for (int i = 0; i < 21; i++)
-                {
-                    for (int j = 0; j < 64; j++)
-                    {
-                        vector += MassCount[i][j].ToString();
-                        vector += " ";
-                        if (j == 0)
-                        {
-                            vector += "\n";
-                        }
-                    }
-                }
-                listView1.Items[count].Text = vector;
+                listView1.Items[i].Text = string.Join(Environment.NewLine,
+                    picDescs[i].Select(a => string.Join(" ", a.Select(b => $"{b:F0}"))));
             }
 
-            listView1.SmallImageList.Images.Clear();
-
-            listView1.SmallImageList.Images.AddRange(rotatedImages.ToArray());
             listView1.Refresh();
 
             //DrawAllDescOnProcessedPic(pairs);
@@ -318,10 +306,10 @@ namespace ObjRec.UI
 
             const int k = 2;
             const double uniquenessThreshold = 0.8d;
-            
+
             var modelKeyPoints = surfCpu.DetectKeyPointsRaw(modelImage, null);
             Matrix<float> modelDescriptors = surfCpu.ComputeDescriptorsRaw(modelImage, null, modelKeyPoints);
-            
+
             var observedKeyPoints = surfCpu.DetectKeyPointsRaw(observedImage, null);
             Matrix<float> observedDescriptors = surfCpu.ComputeDescriptorsRaw(observedImage, null, observedKeyPoints);
             var matcher = new BruteForceMatcher<float>(DistanceType.L2);
@@ -338,13 +326,13 @@ namespace ObjRec.UI
             }
 
             int nonZeroCount = CvInvoke.cvCountNonZero(mask);
-            if (nonZeroCount >= 4)
+            if (nonZeroCount >= 19)
             {
                 nonZeroCount = Features2DToolbox.VoteForSizeAndOrientation(modelKeyPoints, observedKeyPoints, indices, mask, 1.5, 20);
-                if (nonZeroCount >= 4)
+                if (nonZeroCount >= 19)
                     homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(modelKeyPoints, observedKeyPoints, indices, mask, 2);
             }
-            
+
             var result = new Image<Bgr, byte>(observedImage.Bitmap);
 
             //Features2DToolbox.DrawMatches(modelImage, modelKeyPoints, observedImage, observedKeyPoints,
@@ -352,14 +340,14 @@ namespace ObjRec.UI
 
             if (homography != null)
             {
-                Rectangle rect = modelImage.ROI;
-                PointF[] pts = {
-                    new PointF(rect.Left, rect.Bottom),
-                    new PointF(rect.Right, rect.Bottom),
-                    new PointF(rect.Right, rect.Top),
-                    new PointF(rect.Left, rect.Top)
-                };
-                homography.ProjectPoints(pts);
+                //Rectangle rect = modelImage.ROI;
+                //PointF[] pts = {
+                //    new PointF(rect.Left, rect.Bottom),
+                //    new PointF(rect.Right, rect.Bottom),
+                //    new PointF(rect.Right, rect.Top),
+                //    new PointF(rect.Left, rect.Top)
+                //};
+                //homography.ProjectPoints(pts);
 
                 //var rounded = Array.ConvertAll(pts, Point.Round);
 
@@ -368,16 +356,20 @@ namespace ObjRec.UI
                 result = result.WarpPerspective(invMat, INTER.CV_INTER_LINEAR, WARP.CV_WARP_FILL_OUTLIERS, new Bgr(0, 0, 0));
                 result = result.GetSubRect(modelImage.ROI);
             }
+            else
+            {
+                return null;
+            }
 
             return result;
         }
 
         private int GetQuarter(MKeyPoint point, RectangleF roi)
         {
-            var q1 = RectangleF.FromLTRB(roi.Left, roi.Top, roi.Right/4.0f, roi.Bottom/4.0f);
-            var q2 = RectangleF.FromLTRB(roi.Left/4.0f, roi.Top, roi.Right, roi.Bottom/4.0f);
-            var q3 = RectangleF.FromLTRB(roi.Left, roi.Top/4.0f, roi.Right/4.0f, roi.Bottom);
-            var q4 = RectangleF.FromLTRB(roi.Left/4.0f, roi.Top, roi.Right/4.0f, roi.Bottom);
+            var q1 = RectangleF.FromLTRB(roi.Left, roi.Top, roi.Right / 4.0f, roi.Bottom / 4.0f);
+            var q2 = RectangleF.FromLTRB(roi.Left / 4.0f, roi.Top, roi.Right, roi.Bottom / 4.0f);
+            var q3 = RectangleF.FromLTRB(roi.Left, roi.Top / 4.0f, roi.Right / 4.0f, roi.Bottom);
+            var q4 = RectangleF.FromLTRB(roi.Left / 4.0f, roi.Top, roi.Right / 4.0f, roi.Bottom);
 
             if (q1.Contains(point.Point))
                 return 1;
@@ -393,24 +385,24 @@ namespace ObjRec.UI
 
         private int GetOctal(MKeyPoint point, RectangleF roi)
         {
-            var q1 = RectangleF.FromLTRB(roi.Left, roi.Top, roi.Right/4.0f, roi.Bottom/4.0f);
-            var q2 = RectangleF.FromLTRB(roi.Left/4.0f, roi.Top, roi.Right, roi.Bottom/4.0f);
-            var q3 = RectangleF.FromLTRB(roi.Left, roi.Top/4.0f, roi.Right/4.0f, roi.Bottom);
-            var q4 = RectangleF.FromLTRB(roi.Left/4.0f, roi.Top, roi.Right/4.0f, roi.Bottom);
+            var q1 = RectangleF.FromLTRB(roi.Left, roi.Top, roi.Right / 4.0f, roi.Bottom / 4.0f);
+            var q2 = RectangleF.FromLTRB(roi.Left / 4.0f, roi.Top, roi.Right, roi.Bottom / 4.0f);
+            var q3 = RectangleF.FromLTRB(roi.Left, roi.Top / 4.0f, roi.Right / 4.0f, roi.Bottom);
+            var q4 = RectangleF.FromLTRB(roi.Left / 4.0f, roi.Top, roi.Right / 4.0f, roi.Bottom);
 
             int q = GetQuarter(point, roi);
             switch (q)
             {
-                case 1:
-                    return 4 + GetQuarter(point, q1);
-                case 2:
-                    return 8 + GetQuarter(point, q2);
-                case 3:
-                    return 12 + GetQuarter(point, q3);
-                case 4:
-                    return 16 + GetQuarter(point, q4);
-                default:
-                    return 0;
+            case 1:
+                return 4 + GetQuarter(point, q1);
+            case 2:
+                return 8 + GetQuarter(point, q2);
+            case 3:
+                return 12 + GetQuarter(point, q3);
+            case 4:
+                return 16 + GetQuarter(point, q4);
+            default:
+                return 0;
             }
         }
 
@@ -447,17 +439,17 @@ namespace ObjRec.UI
 
             var gr = SplitByQuarter(ocutKeyPoints, image.ROI)
                 .Select(kps => kps.Select(kp => ocutDescriptors.GetRow(ar.IndexOf(kp))))
-                .Select(kps => 
-                kps.Any() ? kps.Aggregate((a, r) => 
+                .Select(kps =>
+                kps.Any() ? kps.Aggregate((a, r) =>
                 a.ConcateVertical(r)) : new Matrix<float>(1, m.Cols));
-            
+
             return gr.Select(GetDistribution).ToArray();
         }
 
         private double[] GetDistribution(Matrix<float> descriptors)
         {
             int[] assign = kmeans.Clusters.Nearest(descriptors.Data.ToDouble().ToJaggedArray());
-            
+
             return Enumerable.Range(0, kmeans.K)
                     .Select(c => (double)assign.Count(a => a == c))
                     .ToArray();
@@ -500,7 +492,7 @@ namespace ObjRec.UI
 
         internal static Image<Bgr, byte> ToImage(this Image image)
         {
-            return new Image<Bgr, byte>((Bitmap) image);
+            return new Image<Bgr, byte>((Bitmap)image);
         }
     }
 }

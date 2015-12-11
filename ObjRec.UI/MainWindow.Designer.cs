@@ -56,7 +56,7 @@
             this.sourcePic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.sourcePic.Location = new System.Drawing.Point(3, 43);
             this.sourcePic.Name = "sourcePic";
-            this.sourcePic.Size = new System.Drawing.Size(659, 364);
+            this.sourcePic.Size = new System.Drawing.Size(659, 310);
             this.sourcePic.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.sourcePic.TabIndex = 0;
             this.sourcePic.TabStop = false;
@@ -69,7 +69,7 @@
             this.processedPic.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.processedPic.Location = new System.Drawing.Point(668, 43);
             this.processedPic.Name = "processedPic";
-            this.processedPic.Size = new System.Drawing.Size(659, 364);
+            this.processedPic.Size = new System.Drawing.Size(659, 310);
             this.processedPic.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.processedPic.TabIndex = 0;
             this.processedPic.TabStop = false;
@@ -127,8 +127,8 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1330, 673);
             this.tableLayoutPanel1.TabIndex = 6;
             // 
@@ -176,9 +176,9 @@
             listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
             this.tableLayoutPanel1.SetColumnSpan(listView1, 2);
-            listView1.Location = new System.Drawing.Point(3, 413);
+            listView1.Location = new System.Drawing.Point(3, 359);
             listView1.Name = "listView1";
-            listView1.Size = new System.Drawing.Size(1324, 257);
+            listView1.Size = new System.Drawing.Size(1324, 311);
             listView1.TabIndex = 3;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = System.Windows.Forms.View.SmallIcon;
