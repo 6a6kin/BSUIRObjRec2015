@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.ListView listView1;
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.sourcePic = new System.Windows.Forms.PictureBox();
             this.processedPic = new System.Windows.Forms.PictureBox();
             this.filenameTextbox = new System.Windows.Forms.TextBox();
@@ -38,7 +40,9 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.siftButton = new System.Windows.Forms.Button();
             this.siftDescSize = new System.Windows.Forms.NumericUpDown();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.trainRBFButton = new System.Windows.Forms.Button();
+            this.determineClassButton = new System.Windows.Forms.Button();
+            this.determinedClassText = new System.Windows.Forms.TextBox();
             listView1 = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.sourcePic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.processedPic)).BeginInit();
@@ -47,6 +51,22 @@
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.siftDescSize)).BeginInit();
             this.SuspendLayout();
+            // 
+            // listView1
+            // 
+            listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1});
+            this.tableLayoutPanel1.SetColumnSpan(listView1, 2);
+            listView1.Location = new System.Drawing.Point(3, 359);
+            listView1.Name = "listView1";
+            listView1.Size = new System.Drawing.Size(1324, 311);
+            listView1.TabIndex = 3;
+            listView1.UseCompatibleStateImageBehavior = false;
+            listView1.View = System.Windows.Forms.View.SmallIcon;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Width = 200;
             // 
             // sourcePic
             // 
@@ -82,6 +102,7 @@
             this.filenameTextbox.Size = new System.Drawing.Size(659, 20);
             this.filenameTextbox.TabIndex = 1;
             this.filenameTextbox.Click += new System.EventHandler(this.filenameTextbox_Click);
+            this.filenameTextbox.TextChanged += new System.EventHandler(this.filenameTextbox_TextChanged);
             // 
             // loadFileButton
             // 
@@ -121,8 +142,8 @@
             this.tableLayoutPanel1.Controls.Add(this.processedPic, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.filenameTextbox, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.sourcePic, 0, 1);
             this.tableLayoutPanel1.Controls.Add(listView1, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.sourcePic, 0, 1);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
@@ -137,6 +158,9 @@
             this.flowLayoutPanel1.Controls.Add(this.loadFileButton);
             this.flowLayoutPanel1.Controls.Add(this.siftButton);
             this.flowLayoutPanel1.Controls.Add(this.siftDescSize);
+            this.flowLayoutPanel1.Controls.Add(this.trainRBFButton);
+            this.flowLayoutPanel1.Controls.Add(this.determineClassButton);
+            this.flowLayoutPanel1.Controls.Add(this.determinedClassText);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(668, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -171,21 +195,32 @@
             0});
             this.siftDescSize.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             // 
-            // listView1
+            // trainRBFButton
             // 
-            listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1});
-            this.tableLayoutPanel1.SetColumnSpan(listView1, 2);
-            listView1.Location = new System.Drawing.Point(3, 359);
-            listView1.Name = "listView1";
-            listView1.Size = new System.Drawing.Size(1324, 311);
-            listView1.TabIndex = 3;
-            listView1.UseCompatibleStateImageBehavior = false;
-            listView1.View = System.Windows.Forms.View.SmallIcon;
+            this.trainRBFButton.Location = new System.Drawing.Point(220, 3);
+            this.trainRBFButton.Name = "trainRBFButton";
+            this.trainRBFButton.Size = new System.Drawing.Size(75, 23);
+            this.trainRBFButton.TabIndex = 9;
+            this.trainRBFButton.Text = "Train";
+            this.trainRBFButton.UseVisualStyleBackColor = true;
+            this.trainRBFButton.Click += new System.EventHandler(this.trainRBFButton_Click);
             // 
-            // columnHeader1
+            // determineClassButton
             // 
-            this.columnHeader1.Width = 200;
+            this.determineClassButton.Location = new System.Drawing.Point(301, 3);
+            this.determineClassButton.Name = "determineClassButton";
+            this.determineClassButton.Size = new System.Drawing.Size(97, 23);
+            this.determineClassButton.TabIndex = 10;
+            this.determineClassButton.Text = "Determine Class";
+            this.determineClassButton.UseVisualStyleBackColor = true;
+            this.determineClassButton.Click += new System.EventHandler(this.determineClassButton_Click);
+            // 
+            // determinedClassText
+            // 
+            this.determinedClassText.Location = new System.Drawing.Point(404, 3);
+            this.determinedClassText.Name = "determinedClassText";
+            this.determinedClassText.Size = new System.Drawing.Size(100, 20);
+            this.determinedClassText.TabIndex = 11;
             // 
             // MainWindow
             // 
@@ -203,6 +238,7 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.siftDescSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -210,7 +246,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.PictureBox sourcePic;
         private System.Windows.Forms.PictureBox processedPic;
         private System.Windows.Forms.TextBox filenameTextbox;
@@ -222,6 +257,9 @@
         private System.Windows.Forms.Button siftButton;
         private System.Windows.Forms.NumericUpDown siftDescSize;
         private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.Button trainRBFButton;
+        private System.Windows.Forms.Button determineClassButton;
+        private System.Windows.Forms.TextBox determinedClassText;
     }
 }
 

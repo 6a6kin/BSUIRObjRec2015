@@ -26,6 +26,7 @@ namespace ObjRec.UI
         private readonly List<Image> rotatedImages = new List<Image>();
 
         private KMeans kmeans;
+        private RBF rbf;
 
         private int sz = 60;
 
@@ -47,11 +48,11 @@ namespace ObjRec.UI
 
         private void ModelImages(List<Image> images)
         {
-            listView1.SmallImageList = new ImageList { ImageSize = new Size(200, 200) };
-            listView1.SmallImageList.Images.AddRange(images.ToArray());
+            //listView1.SmallImageList = new ImageList { ImageSize = new Size(200, 200) };
+            //listView1.SmallImageList.Images.AddRange(images.ToArray());
 
-            listView1.Items.Clear();
-            listView1.Items.AddRange(images.Select((image, i) => new ListViewItem { ImageIndex = i}).ToArray());
+            //listView1.Items.Clear();
+            //listView1.Items.AddRange(images.Select((image, i) => new ListViewItem { ImageIndex = i}).ToArray());
         }
 
         private void LoadFile(string fileName)
@@ -161,18 +162,54 @@ namespace ObjRec.UI
             kmeans.Compute(descs);
 
             var picDescs = rotatedImages.Select(i => MakePicDescriptor(i.ToImage())).ToList();
+           
+            //for (var i = 0; i < listView1.Items.Count; i++)
+            //{
+            //    listView1.Items[i].Text = string.Join(Environment.NewLine,
+            //        picDescs[i].Select(a => string.Join(" ", a.Select(b => $"{b:F0}"))));
+            //}
 
-            for (var i = 0; i < listView1.Items.Count; i++)
-            {
-                listView1.Items[i].Text = string.Join(Environment.NewLine,
-                    picDescs[i].Select(a => string.Join(" ", a.Select(b => $"{b:F0}"))));
-            }
-
-            listView1.Refresh();
+            //listView1.Refresh();
 
             //DrawAllDescOnProcessedPic(pairs);
 
             statusBarText.Text = @"Ready";
+        }
+
+        private List<float[]> ToFloatsList(List<double[][]> picDescs)
+        {
+            var traindedData = new List<float[]>();
+            foreach (var descr in picDescs)
+            {
+                IEnumerable<float> a = new List<float>();
+                //descr.Select(x => x.Concat(x.ToList()));
+                foreach (var item in descr)
+                {
+                    a = a.Concat(item.Select(x => (float)x));
+                }
+                traindedData.Add(a.ToArray());
+            }
+            return traindedData;
+        }
+
+        private Dictionary<float, List<float[]>> ReadTrainImages()
+        {
+            Dictionary<float, List<float[]>> descrForTrainDictionary = new Dictionary<float, List<float[]>>();
+
+            List<Image> bikeImages = Directory.EnumerateFiles("./test/bike", "*.jpg").Union(Directory.EnumerateFiles("./test/bike", "*.png")).Select(Image.FromFile).ToList();
+            var bikeDescriptors = bikeImages.Select(i => MakePicDescriptor(i.ToImage())).ToList();
+            descrForTrainDictionary.Add(0, ToFloatsList(bikeDescriptors));
+
+            List<Image> crutchImages = Directory.EnumerateFiles("./test/crutch", "*.jpg").Union(Directory.EnumerateFiles("./test/crutch", "*.png")).Select(Image.FromFile).ToList();
+            var crutchDescriptors = crutchImages.Select(i => MakePicDescriptor(i.ToImage())).ToList();
+            descrForTrainDictionary.Add(1, ToFloatsList(crutchDescriptors));
+
+            List<Image> houseImages = Directory.EnumerateFiles("./test/house", "*.jpg").Union(Directory.EnumerateFiles("./test/house", "*.png")).Select(Image.FromFile).ToList();
+            var houseDescriptors = houseImages.Select(i => MakePicDescriptor(i.ToImage())).ToList();
+            descrForTrainDictionary.Add(2, ToFloatsList(houseDescriptors));
+
+
+            return descrForTrainDictionary;
         }
 
         private Bitmap ApplySift(Bitmap bigPic, Bitmap modelPic)
@@ -462,6 +499,39 @@ namespace ObjRec.UI
             VectorOfKeyPoint ocutKeyPoints = surfCpu.DetectKeyPointsRaw(new Image<Gray, byte>(image.Bitmap), null);
 
             return surfCpu.ComputeDescriptorsRaw(new Image<Gray, byte>(image.Bitmap), null, ocutKeyPoints);
+        }
+
+        private void trainRBFButton_Click(object sender, EventArgs e)
+        {
+            var traneData = ReadTrainImages();
+            rbf = new RBF();
+            rbf.RunTraining(traneData);
+        }
+
+        private void determineClassButton_Click(object sender, EventArgs e)
+        {
+            List<Image> testImages = Directory.EnumerateFiles("./test/test", "*.jpg").Union(Directory.EnumerateFiles("./test/test", "*.png")).Select(Image.FromFile).ToList();
+            var testDescriptors = testImages.Select(i => MakePicDescriptor(i.ToImage())).ToList();
+            var search = ToFloatsList(testDescriptors);
+            var className = rbf.DetermineClass(search.First());
+            determinedClassText.Text = ToClassNameString(className);
+        }
+
+        private string ToClassNameString(float a)
+        {
+            var i = (int) a;
+            switch (i)
+            {
+                case 0:return "Bike";
+                case 1: return "Crutch";
+                case 2: return "House";
+            }
+            return null;
+        }
+
+        private void filenameTextbox_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 
